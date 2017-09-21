@@ -2707,8 +2707,7 @@ class RegularGridInterpolator(object):
                                              "" % (n_p, i, method, k + 1))
 
             interpolator = make_interp_spline
-            result = self._evaluate_separable(self.grid,
-                                              self.values[:].T,
+            result = self._evaluate_separable(self.values[:].T,
                                               xi,
                                               indices,
                                               interpolator,
@@ -2743,7 +2742,7 @@ class RegularGridInterpolator(object):
             idx_res.append(np.where(yi <= .5, i, i + 1))
         return self.values[idx_res]
 
-    def _evaluate_separable(self, grid, data_values, xi, indices, interpolator,
+    def _evaluate_separable(self, data_values, xi, indices, interpolator,
                             method, ki, compute_gradients=True):
         """Convenience method for separable regular grid interpolation."""
         # for spline based methods
@@ -2792,8 +2791,7 @@ class RegularGridInterpolator(object):
                 # gradients. This is equivalent to multiplication by
                 # dResults/dValues at each level.
                 if compute_gradients:
-                    gradient[i] = self._evaluate_separable(self.grid[: i],
-                                                           local_derivs,
+                    gradient[i] = self._evaluate_separable(local_derivs,
                                                            x[: i],
                                                            indices,
                                                            interpolator,
