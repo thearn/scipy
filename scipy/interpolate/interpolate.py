@@ -28,7 +28,7 @@ from . import dfitpack
 from . import _fitpack
 from .polyint import _Interpolator1D
 from . import _ppoly
-from .fitpack2 import RectBivariateSpline, UnivariateSpline
+from .fitpack2 import RectBivariateSpline
 from .interpnd import _ndim_coords_from_arrays
 from ._bsplines import make_interp_spline, BSpline
 
@@ -2340,9 +2340,8 @@ class RegularGridInterpolator(object):
     as usual in this case.
 
     The 'slinear', 'quadratic', 'cubic', 'quartic', 'quintic' methods
-    are all spline-based interpolators. These make use of `UnivariateSpline` in
-    each dimension. Use of the spline interpolations allows for getting
-    gradient values via the ``gradient`` method.
+    are all spline-based interpolators. Use of the spline interpolations
+    allows for getting gradient values via the ``gradient`` method.
 
     Interpolation with the spline methods is expectedly slower than 'linear' or
     'nearest'. They use a different separable tensor product interpolation
@@ -2549,9 +2548,7 @@ class RegularGridInterpolator(object):
         """Method-specific settings for interpolation and for testing."""
         interpolator_configs = {
             "slinear": 1,
-            "quadratic": 2,
             "cubic": 3,
-            "quartic": 4,
             "quintic": 5,
         }
 
@@ -2563,8 +2560,7 @@ class RegularGridInterpolator(object):
     @staticmethod
     def methods():
         """Return a list of valid interpolation method names."""
-        return ['nearest', 'linear', 'slinear', 'quadratic', 'cubic',
-                'quartic', 'quintic']
+        return ['nearest', 'linear', 'slinear', 'cubic', 'quintic']
 
     def __init__(self, points, values, method="linear", bounds_error=True,
                  fill_value=np.nan, spline_dim_error=True):
@@ -2714,7 +2710,7 @@ class RegularGridInterpolator(object):
                                              "least % d points per dimension."
                                              "" % (n_p, i, method, k + 1))
 
-            interpolator = UnivariateSpline
+            interpolator = make_interp_spline
             result = self._evaluate_separable(self.grid,
                                               self.values,
                                               xi,
@@ -2754,7 +2750,7 @@ class RegularGridInterpolator(object):
     def _evaluate_separable(self, grid, data_values, xi, indices, interpolator,
                             method, ki, compute_gradients=True):
         """Convenience method for separable regular grid interpolation."""
-        # for UnivariateSpline based methods
+        # for spline based methods
 
         # fitpack requires floating point input
         xi = xi.astype(np.float)
@@ -2803,7 +2799,7 @@ class RegularGridInterpolator(object):
                 # dimensions. This collapses each 1D sequence into a scalar.
                 interp_args = []
                 k = ki[i]
-                interp_kwargs = {'k': k, 's': 0, 'ext': 0}
+                interp_kwargs = {'k': k}
 
                 for k in range(n_rows):
                     local_interp = interpolator(self.grid[i],
@@ -2837,7 +2833,7 @@ class RegularGridInterpolator(object):
             # compute the final interpolated results, and gradient w.r.t. the
             # first dimension
             interp_args = []
-            interp_kwargs = {'k': ki[0], 's': 0, 'ext': 0}
+            interp_kwargs = {'k': ki[0]}
             final_interp = interpolator(self.grid[0],
                                         values, *interp_args, **interp_kwargs)
             output_value = final_interp(x[0])

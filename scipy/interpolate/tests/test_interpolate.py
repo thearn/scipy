@@ -2389,8 +2389,8 @@ class TestRegularGridInterpolator(object):
         # in the first dimension
         value2 = interp(x, method='quintic')
         interp.gradient(x, method='quintic')
-        value3 = interp(x, method='quadratic')
-        interp.gradient(x, method='quadratic')
+        value3 = interp(x, method='cubic')
+        interp.gradient(x, method='cubic')
         # use default method again
         value4 = interp(x)
 
@@ -2595,7 +2595,7 @@ class TestRegularGridInterpolator(object):
         tol = 1e-1
         for method in self.fitpack_methods:
             k = self.interp_configs[method]
-            if method in ['slinear', 'quadratic']:
+            if method == 'slinear':
                 tol = 2
             interp = RegularGridInterpolator(points, values, method,
                                              bounds_error=False,
