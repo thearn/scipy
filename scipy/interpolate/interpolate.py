@@ -2548,10 +2548,10 @@ class RegularGridInterpolator(object):
             "quintic": 5,
         }
 
-        fitpack_interps = interpolator_configs.keys()
-        all_methods = ['nearest', 'linear'] + list(fitpack_interps)
+        spline_interps = interpolator_configs.keys()
+        all_methods = ['nearest', 'linear'] + list(spline_interps)
 
-        return fitpack_interps, all_methods, interpolator_configs
+        return spline_interps, all_methods, interpolator_configs
 
     @staticmethod
     def methods():
@@ -2562,7 +2562,7 @@ class RegularGridInterpolator(object):
                  fill_value=np.nan, spline_dim_error=True):
 
         configs = RegularGridInterpolator._interp_methods()
-        self._fitpack_methods, self._all_methods, self._interp_config = configs
+        self._spline_methods, self._all_methods, self._interp_config = configs
         if method not in self._all_methods:
             all_m = ', '.join(['"' + m + '"' for m in self._all_methods])
             raise ValueError('Method "%s" is not defined. Valid methods are '
@@ -2603,7 +2603,7 @@ class RegularGridInterpolator(object):
             if not values.shape[i] == n_p:
                 raise ValueError("There are %d points and %d values in "
                                  "dimension %d" % (len(p), values.shape[i], i))
-            if method in self._fitpack_methods:
+            if method in self._spline_methods:
                 k = self._interp_config[method]
                 self._ki.append(k)
                 if n_p <= k:
@@ -2616,7 +2616,7 @@ class RegularGridInterpolator(object):
                                          "dimension."
                                          "" % (n_p, i, method, k + 1))
 
-        if method in self._fitpack_methods:
+        if method in self._spline_methods:
             if np.iscomplexobj(values[:]):
                 raise ValueError("method '%s' does not support complex values."
                                  " Use 'linear' or 'nearest'." % method)
@@ -2684,7 +2684,7 @@ class RegularGridInterpolator(object):
                                             norm_distances,
                                             out_of_bounds)
 
-        elif method in self._fitpack_methods:
+        elif method in self._spline_methods:
             if np.iscomplexobj(self.values[:]):
                 raise ValueError("method '%s' does not support complex values."
                                  " Use 'linear' or 'nearest'." % method)
@@ -2761,10 +2761,6 @@ class RegularGridInterpolator(object):
         if compute_gradients:
             all_gradients = np.empty_like(xi)
 
-        # fitpack interpolators do not seem to like matrix objects
-        if isinstance(data_values, np.matrix):
-            data_values = data_values.A1.reshape(data_values.shape)
-
         # Non-stationary procedure: difficult to vectorize this part entirely
         # into numpy-level operations. Unfortunately this requires explicit
         # looping over each point in xi.
@@ -2797,9 +2793,7 @@ class RegularGridInterpolator(object):
                 k = ki[i]
                 interp_kwargs = {'k': k, 'axis': 0}
 
-
-                local_interp = interpolator(self.grid[i],
-                                            values.T,
+                local_interp = interpolator(self.grid[i], values.T,
                                             *interp_args,
                                             **interp_kwargs)
 
@@ -2898,7 +2892,7 @@ class RegularGridInterpolator(object):
 
         if not method:
             method = self.method
-        if method not in self._fitpack_methods:
+        if method not in self._spline_methods:
             raise ValueError("method '%s' does not support gradient"
                              " calculations. " % method)
 
@@ -2978,7 +2972,7 @@ def interpn(points, values, xi, method="linear", bounds_error=True,
     """
 
     configs = RegularGridInterpolator._interp_methods()
-    _fitpack_methods, _all_methods, _interp_config = configs
+    _spline_methods, _all_methods, _interp_config = configs
     # sanity check 'method' kwarg
     if method not in _all_methods + ['splinef2d']:
         all_m = ', '.join(['"' + m + '"' for m in _all_methods])
@@ -3016,7 +3010,7 @@ def interpn(points, values, xi, method="linear", bounds_error=True,
         if not values.shape[i] == n_p:
             raise ValueError("There are %d points and %d values in "
                              "dimension %d" % (n_p, values.shape[i], i))
-        if method in _fitpack_methods:
+        if method in _spline_methods:
             k = _interp_config[method]
             if n_p <= k:
                 raise ValueError("There are %d points in dimension %d, but"
