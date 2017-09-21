@@ -2752,7 +2752,7 @@ class RegularGridInterpolator(object):
         """Convenience method for separable regular grid interpolation."""
         # for spline based methods
 
-        # fitpack requires floating point input
+        # requires floating point input
         xi = xi.astype(np.float)
 
         # ensure xi is 2D list of points to evaluate
@@ -2799,16 +2799,17 @@ class RegularGridInterpolator(object):
                 # dimensions. This collapses each 1D sequence into a scalar.
                 interp_args = []
                 k = ki[i]
-                interp_kwargs = {'k': k}
+                interp_kwargs = {'k': k, 'axis': 0}
 
-                for k in range(n_rows):
-                    local_interp = interpolator(self.grid[i],
-                                                values[k],
-                                                *interp_args,
-                                                **interp_kwargs)
-                    values_reduced[k] = local_interp(x[i])
-                    if compute_gradients:
-                        local_derivs[k] = local_interp(x[i], 1)
+
+                local_interp = interpolator(self.grid[i],
+                                            values.T,
+                                            *interp_args,
+                                            **interp_kwargs)
+
+                values_reduced = local_interp(x[i])
+                if compute_gradients:
+                    local_derivs = local_interp(x[i], 1)
 
                 # "Fold" the results into the next dimension, reducing the
                 # overall size
