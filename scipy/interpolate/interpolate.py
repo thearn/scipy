@@ -2719,7 +2719,7 @@ class RegularGridInterpolator(object):
             result[out_of_bounds] = self.fill_value
 
         return result.reshape(xi_shape[:-1] +
-                              self.values.shape[ndim:]).squeeze()
+                              self.values.shape[ndim:])
 
     def _evaluate_linear(self, indices, norm_distances, out_of_bounds):
         # slice for broadcasting over trailing dimensions in self.values
@@ -2903,7 +2903,7 @@ class RegularGridInterpolator(object):
             self.__call__(xi, method=method)
         gradients = self._all_gradients
         gradients = gradients.reshape(np.asarray(xi).shape)
-        return gradients.squeeze()
+        return gradients
 
 
 def interpn(points, values, xi, method="linear", bounds_error=True,
