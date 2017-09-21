@@ -2814,13 +2814,14 @@ class RegularGridInterpolator(object):
             # All values have been folded down to a single dimensional array
             # compute the final interpolated results, and gradient w.r.t. the
             # first dimension
-            interp_args = []
-            interp_kwargs = {'k': ki[0]}
-            final_interp = interpolator(self.grid[0],
-                                        values, *interp_args, **interp_kwargs)
-            output_value = final_interp(x[0])
+            output_value, gradient[0] = self._do_spline_fit(interpolator,
+                                                            self.grid[0],
+                                                            values,
+                                                            x[0],
+                                                            ki[0],
+                                                            compute_gradients)
+
             if compute_gradients:
-                gradient[0] = final_interp(x[0], 1)
                 all_gradients[j] = gradient
             result[j] = output_value
 
