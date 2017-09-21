@@ -2278,11 +2278,11 @@ class RegularGridInterpolator(object):
     Interpolation on a regular grid in arbitrary dimensions.
 
     The data must be defined on a regular grid; the grid spacing however may be
-    uneven. Linear, nearest-neighbour, and third through fifth order spline
+    uneven. Linear, nearest-neighbour, and first, third and fifth order spline
     interpolation are supported. After setting up the interpolator object, the
-    interpolation method (*nearest*, *linear*, *slinear*, *quadratic*, *cubic*,
-    *quartic*, *quintic*) may be chosen at each evaluation. Additionally,
-    gradients are provided for the spline interpolation methods.
+    interpolation method (*nearest*, *linear*, *slinear*, *cubic*, and
+    *quintic*) may be chosen at each evaluation. Additionally, gradients are
+    provided for the spline interpolation methods.
 
     Parameters
     ----------
@@ -2294,8 +2294,8 @@ class RegularGridInterpolator(object):
 
     method : str, optional
         The method of interpolation to perform. Supported are 'nearest',
-        'linear', 'slinear', 'quadratic', 'cubic', 'quartic', and
-        'quintic'. This parameter will become the default for the object's
+        'linear', 'slinear', 'cubic', and 'quintic'. This parameter will become
+        the default for the object's
         ``__call__`` method. Default is "linear".
 
     bounds_error : bool, optional
@@ -2335,9 +2335,9 @@ class RegularGridInterpolator(object):
     return an array of `nan` values. Nearest-neighbor interpolation will work
     as usual in this case.
 
-    The 'slinear', 'quadratic', 'cubic', 'quartic', 'quintic' methods
-    are all spline-based interpolators. Use of the spline interpolations
-    allows for getting gradient values via the ``gradient`` method.
+    The 'slinear', 'cubic', 'quintic' methods are spline-based interpolators.
+    Use of the spline interpolations allows for getting gradient
+    values via the ``gradient`` method.
 
     Interpolation with the spline methods is expectedly slower than 'linear' or
     'nearest'. They use a different separable tensor product interpolation
@@ -2638,8 +2638,8 @@ class RegularGridInterpolator(object):
 
         method : str, optional
             The method of interpolation to perform. Supported are 'nearest',
-            'linear', 'slinear', 'quadratic', 'cubic', 'quartic', and
-            'quintic'. Default is None, which will use the method defined at
+            'linear', 'slinear', 'cubic', and 'quintic'. Default is None, 
+            which will use the method defined at
             the construction of the interpolation object instance.
 
         computer_gradients : bool, optional
@@ -2877,10 +2877,9 @@ class RegularGridInterpolator(object):
             The coordinates to sample the gridded data at
 
         method : str, optional
-            The method of interpolation to perform. Supported are slinear',
-            'quadratic', 'cubic', 'quartic', and
-            'quintic'. Default is None, which will use the method defined at
-            the construction of the interpolation object instance.
+            The method of interpolation to perform. Supported are 'slinear',
+            'cubic', and 'quintic'. Default is None, which will use the method
+            defined at the construction of the interpolation object instance.
 
         Returns
         -------
@@ -2924,9 +2923,8 @@ def interpn(points, values, xi, method="linear", bounds_error=True,
 
     method : str, optional
         The method of interpolation to perform. Supported are "nearest",
-        "linear", "slinear", quadratic", "cubic", "quartic",
-        "quintic", and "splinef2d". "splinef2d" is only supported for
-        2-dimensional data.
+        "linear", "slinear", "cubic", "quintic", and "splinef2d". "splinef2d"
+        is only supported for 2-dimensional data.
 
     bounds_error : bool, optional
         If True, when interpolated values are requested outside of the
