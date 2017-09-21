@@ -2267,7 +2267,6 @@ def _ppoly4d_eval(c, xs, xnew, ynew, znew, unew, nu=None):
 
     return out
 
-
 def rel_error(actual, computed):
     return np.linalg.norm(actual - computed) / np.linalg.norm(actual)
 
